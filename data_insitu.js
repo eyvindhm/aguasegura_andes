@@ -1,4 +1,4 @@
-const PH_DATA = [
+const INSITU_DATA = [
   {
     "n": "Olleros",
     "lat": -9.67134,
