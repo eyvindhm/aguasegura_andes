@@ -188,7 +188,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="data_insitu.js"></script>
 <script src="data_est_L8OLI.js"></script>
+<script src="data_est_S2MSI.js"></script>
+<script src="data_est_PSBSD.js"></script>
 <script>
+
 /* ============ Paneles colapsables ============ */
 document.querySelectorAll('.panel-head').forEach(h => {
   h.addEventListener('click', () => h.parentElement.classList.toggle('collapsed'));
@@ -346,15 +349,20 @@ document.getElementById('chkInsituCe').addEventListener('change', e => {
 });
 
 /* ============ Estimaciones espectrales ============ */
-const dates = [...new Set(PH_DATA.map(d => d.f))].sort();
+const datasets = {
+  l8: PH_DATA,
+  s2: window.PH_DATA_S2MSI,
+  planet: window.PH_DATA_PSBSD};
+
+const dates = [...new Set(Object.values(datasets).flat().map(d => d.f))].sort();
 const spectralDefinitions = {
-  phL8: { label: 'pH_Landsat 8 OLI', value: 'ph', color: phColor },
-  phS2: { label: 'pH_Sentinel-2 MSI', value: 'ph', color: phColor },
-  phPlanet: { label: 'pH_Planet PSB.SD', value: 'ph', color: phColor },
-  ceL8: { label: 'CE_Landsat 8 OLI', value: 'ce', color: ceColor },
-  ceS2: { label: 'CE_Sentinel-2 MSI', value: 'ce', color: ceColor },
-  cePlanet: { label: 'CE_Planet PSB.SD', value: 'ce', color: ceColor }
-};
+  phL8: {label: 'pH_Landsat 8 OLI',value: 'ph',color: phColor,data: datasets.l8},
+  phS2: {label: 'pH_Sentinel-2 MSI',value: 'ph',color: phColor,data: datasets.s2},
+  phPlanet: {label: 'pH_Planet PSB.SD',value: 'ph',color: phColor,data: datasets.planet},
+  ceL8: {label: 'CE_Landsat 8 OLI',value: 'ce',color: ceColor,data: datasets.l8},
+  ceS2: {label: 'CE_Sentinel-2 MSI',value: 'ce',color: ceColor,data: datasets.s2},
+  cePlanet: {label: 'CE_Planet PSB.SD',value: 'ce',color: ceColor,data: datasets.planet}};
+
 const spectralLayers = {};
 Object.keys(spectralDefinitions).forEach(key => {
   spectralLayers[key] = L.layerGroup();
@@ -369,7 +377,7 @@ const dateListEl = document.getElementById('dateList');
 function buildDateList() {
   dateListEl.innerHTML = '';
   dates.forEach((f, idx) => {
-    const n = PH_DATA.filter(d => d.f === f).length;
+    const n = Object.values(datasets).flat().filter(d => d.f === f).length;
     const item = document.createElement('div');
     item.className = 'date-item' + (idx === currentDateIdx ? ' active' : '');
     item.dataset.idx = idx;
@@ -415,7 +423,7 @@ function renderL8() {
   Object.entries(spectralDefinitions).forEach(([key, definition]) => {
     const layer = spectralLayers[key];
     layer.clearLayers();
-    PH_DATA.forEach(d => {
+    definition.data.forEach(d => {
       if (d.f !== fecha) return;
       const value = d[definition.value];
       const hasValue = value !== null && value !== undefined;
