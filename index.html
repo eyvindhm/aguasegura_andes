@@ -189,7 +189,6 @@
 <script src="data_insitu.js"></script>
 <script src="data_est_L8OLI.js"></script>
 <script src="data_est_S2MSI.js"></script>
-<script src="data_est_PSBSD.js"></script>
 <script>
 
 /* ============ Paneles colapsables ============ */
@@ -352,7 +351,7 @@ document.getElementById('chkInsituCe').addEventListener('change', e => {
 const datasets = {
   l8: PH_DATA,
   s2: window.PH_DATA_S2MSI,
-  planet: window.PH_DATA_PSBSD};
+  planet: window.PH_DATA_S2MSI};
 
 const dates = [...new Set(Object.values(datasets).flat().map(d => d.f))].sort();
 const spectralDefinitions = {
