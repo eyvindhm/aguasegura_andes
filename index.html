@@ -266,7 +266,7 @@ fetch('Cuenca Rio Negro.geojson').then(r => r.json()).then(gj => {
   }).addTo(map);
   queueFit(cuencaLayer);
   doInitialFitIfReady();
-}).catch(err => console.error('Error cargando Cuenca_Rio_Negro.geojson', err));
+}).catch(err => console.error('Error cargando Cuenca Rio Negro.geojson', err));
 
 fetch('Lagunas.geojson').then(r => r.json()).then(gj => {
   lagunasGeoLayer = L.geoJSON(gj, {
