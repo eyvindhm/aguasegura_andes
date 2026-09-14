@@ -268,6 +268,38 @@ fetch('Cuenca Rio Negro.geojson').then(r => r.json()).then(gj => {
   doInitialFitIfReady();
 }).catch(err => console.error('Error cargando Cuenca Rio Negro.geojson', err));
 
+fetch('Casca.geojson').then(r => r.json()).then(gj => {
+  cuencaLayer = L.geoJSON(gj, {
+    style: { color: '#e5484d', weight: 2, fill: false }
+  }).addTo(map);
+  queueFit(cuencaLayer);
+  doInitialFitIfReady();
+}).catch(err => console.error('Error cargando Casca.geojson', err));
+
+fetch('Quillcay.geojson').then(r => r.json()).then(gj => {
+  cuencaLayer = L.geoJSON(gj, {
+    style: { color: '#e5484d', weight: 2, fill: false }
+  }).addTo(map);
+  queueFit(cuencaLayer);
+  doInitialFitIfReady();
+}).catch(err => console.error('Error cargando Quillcay.geojson', err));
+
+fetch('Pachacoto.geojson').then(r => r.json()).then(gj => {
+  cuencaLayer = L.geoJSON(gj, {
+    style: { color: '#e5484d', weight: 2, fill: false }
+  }).addTo(map);
+  queueFit(cuencaLayer);
+  doInitialFitIfReady();
+}).catch(err => console.error('Error cargando Pachacoto.geojson', err));
+
+fetch('Pariac.geojson').then(r => r.json()).then(gj => {
+  cuencaLayer = L.geoJSON(gj, {
+    style: { color: '#e5484d', weight: 2, fill: false }
+  }).addTo(map);
+  queueFit(cuencaLayer);
+  doInitialFitIfReady();
+}).catch(err => console.error('Error cargando Pariac.geojson', err));
+ 
 fetch('Lagunas.geojson').then(r => r.json()).then(gj => {
   lagunasGeoLayer = L.geoJSON(gj, {
     style: { color: '#3fa9f5', weight: 2, fill: false },
