@@ -81,6 +81,17 @@
   .popup-title { font-weight: 700; margin-bottom: 6px; font-size: 14px; }
   .popup-row { font-size: 12px; margin: 2px 0; color: #b9c6d4; }
   .popup-row b { color: #fff; font-weight: 600; }
+  .basin-label {
+    background: rgba(16, 21, 28, 0.9); border: 1px solid #e5484d; border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.45); color: #fff; font-size: 11px;
+    font-weight: 700; padding: 2px 5px; text-shadow: 0 1px 2px #000;
+  }
+  .basin-label::before { border-right-color: #e5484d !important; }
+  .measurement-marker { background: transparent; border: 0; }
+  .triangle-marker {
+    width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent;
+    border-bottom: 13px solid; filter: drop-shadow(0 0 1px #0b0e12);
+  }
 
   ::-webkit-scrollbar { width: 8px; }
   ::-webkit-scrollbar-thumb { background: #232b36; border-radius: 4px; }
@@ -96,15 +107,16 @@
 <div id="layout">
   <div id="sidebar">
 
-    <!-- Capas geográficas -->
+    <!-- Capas de visualización -->
     <div class="panel" id="panel-geo">
-      <div class="panel-head"><h2>Capas geográficas</h2><span class="chev">▾</span></div>
+      <div class="panel-head"><h2>Capas de visualización</h2><span class="chev">▾</span></div>
       <div class="panel-body">
-        <label class="layer-row">
-          <input type="checkbox" id="chkCuenca" checked>
-          <span class="swatch outline" style="border-color:#e5484d"></span>
-          Cuenca Río Negro
-        </label>
+        <div class="subhead">Cuencas afectadas por DAR</div>
+        <label class="layer-row"><input type="checkbox" id="chkBasinCasca" checked><span class="swatch outline" style="border-color:#e5484d"></span>Casca</label>
+        <label class="layer-row"><input type="checkbox" id="chkBasinRioNegro" checked><span class="swatch outline" style="border-color:#e5484d"></span>Río Negro</label>
+        <label class="layer-row"><input type="checkbox" id="chkBasinPachacoto" checked><span class="swatch outline" style="border-color:#e5484d"></span>Pachacoto</label>
+        <label class="layer-row"><input type="checkbox" id="chkBasinPariac" checked><span class="swatch outline" style="border-color:#e5484d"></span>Pariac</label>
+        <label class="layer-row"><input type="checkbox" id="chkBasinQuillcay" checked><span class="swatch outline" style="border-color:#e5484d"></span>Quillcay</label>
         <label class="layer-row">
           <input type="checkbox" id="chkLagunas" checked>
           <span class="swatch outline" style="border-color:#3fa9f5"></span>
@@ -118,9 +130,9 @@
       </div>
     </div>
 
-    <!-- Datos in situ -->
+    <!-- Mediciones en campo -->
     <div class="panel" id="panel-insitu">
-      <div class="panel-head"><h2>Datos in situ</h2><span class="chev">▾</span></div>
+      <div class="panel-head"><h2>Mediciones en campo</h2><span class="chev">▾</span></div>
       <div class="panel-body">
 
         <label class="layer-row">
@@ -150,22 +162,16 @@
       </div>
     </div>
 
-    <!-- Estimaciones L8OLI -->
+    <!-- Estimaciones espectrales -->
     <div class="panel" id="panel-l8">
-      <div class="panel-head"><h2>Estimaciones pH — Landsat 8 OLI</h2><span class="chev">▾</span></div>
+      <div class="panel-head"><h2>Estimaciones espectrales</h2><span class="chev">▾</span></div>
       <div class="panel-body">
-
-        <label class="layer-row">
-          <input type="checkbox" id="chkL8" checked>
-          <span class="swatch" style="background:#a6d96a"></span>
-          Mostrar capa
-        </label>
-
-        <div class="legend-wrap">
-          <div class="legend-bar" style="background:linear-gradient(to right, #d73027, #fdae61, #ffffbf, #a6d96a, #1a9850, #313695);"></div>
-          <div class="legend-ticks"><span>0</span><span>3.5</span><span>7</span><span>10.5</span><span>14</span></div>
-          <div class="legend-unit">Escala de pH (0–14)</div>
-        </div>
+        <label class="layer-row"><input type="checkbox" data-spectral-layer="phL8" checked><span class="swatch" style="background:#a6d96a"></span>pH_Landsat 8 OLI</label>
+        <label class="layer-row"><input type="checkbox" data-spectral-layer="phS2" checked><span class="swatch" style="background:#a6d96a"></span>pH_Sentinel-2 MSI</label>
+        <label class="layer-row"><input type="checkbox" data-spectral-layer="phPlanet" checked><span class="swatch" style="background:#a6d96a"></span>pH_Planet PSB.SD</label>
+        <label class="layer-row"><input type="checkbox" data-spectral-layer="ceL8"><span class="swatch" style="background:#fc8d59"></span>CE_Landsat 8 OLI</label>
+        <label class="layer-row"><input type="checkbox" data-spectral-layer="ceS2"><span class="swatch" style="background:#fc8d59"></span>CE_Sentinel-2 MSI</label>
+        <label class="layer-row"><input type="checkbox" data-spectral-layer="cePlanet"><span class="swatch" style="background:#fc8d59"></span>CE_Planet PSB.SD</label>
 
         <div class="subhead">Filtro de fecha</div>
         <div id="dateFilterHead">
@@ -173,14 +179,6 @@
           <span style="font-size:12px; color:#b9c6d4;">Selecciona una fecha</span>
         </div>
         <div id="dateList"></div>
-
-        <div class="subhead">Estaciones</div>
-        <div id="lagunaList"></div>
-
-        <div class="subhead">Resumen (fecha seleccionada)</div>
-        <div class="stat-row">Puntos con dato: <b id="sumN">–</b></div>
-        <div class="stat-row">pH promedio: <b id="sumMean">–</b></div>
-        <div class="stat-row">pH min / max: <b id="sumRange">–</b></div>
 
       </div>
     </div>
@@ -253,48 +251,42 @@ function doInitialFitIfReady() {
   if (b.isValid()) { map.fitBounds(b, { padding: [30,30] }); didInitialFit = true; }
 }
 
-/* ============ Capas geográficas (geojson) ============ */
-let cuencaLayer, lagunasGeoLayer, riosLayer;
+/* ============ Cuencas afectadas por DAR ============ */
+const basinDefinitions = [
+  { key: 'Casca', file: 'Casca.geojson', checkbox: 'chkBasinCasca' },
+  { key: 'RioNegro', name: 'Río Negro', file: 'Cuenca Rio Negro.geojson', checkbox: 'chkBasinRioNegro' },
+  { key: 'Pachacoto', file: 'Pachacoto.geojson', checkbox: 'chkBasinPachacoto' },
+  { key: 'Pariac', file: 'Pariac.geojson', checkbox: 'chkBasinPariac' },
+  { key: 'Quillcay', file: 'Quillcay.geojson', checkbox: 'chkBasinQuillcay' }
+];
+const basinLayers = {};
 
-fetch('Cuenca Rio Negro.geojson').then(r => r.json()).then(gj => {
-  cuencaLayer = L.geoJSON(gj, {
-    style: { color: '#e5484d', weight: 2, fill: false }
-  }).addTo(map);
-  queueFit(cuencaLayer);
-  doInitialFitIfReady();
-}).catch(err => console.error('Error cargando Cuenca Rio Negro.geojson', err));
+basinDefinitions.forEach(({ key, name = key, file, checkbox }) => {
+  fetch(file).then(response => {
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  }).then(gj => {
+    const layer = L.geoJSON(gj, {
+      style: { color: '#e5484d', weight: 2, fill: false },
+      onEachFeature: (feature, featureLayer) => {
+        featureLayer.bindTooltip(name, {
+          permanent: true, direction: 'center', className: 'basin-label', opacity: 0.95
+        });
+      }
+    }).addTo(map);
+    basinLayers[key] = layer;
+    queueFit(layer);
+    doInitialFitIfReady();
+  }).catch(err => console.error(`Error cargando ${file}`, err));
 
-fetch('Casca.geojson').then(r => r.json()).then(gj => {
-  cuencaLayer = L.geoJSON(gj, {
-    style: { color: '#e5484d', weight: 2, fill: false }
-  }).addTo(map);
-  queueFit(cuencaLayer);
-  doInitialFitIfReady();
-}).catch(err => console.error('Error cargando Casca.geojson', err));
+  document.getElementById(checkbox).addEventListener('change', event => {
+    const layer = basinLayers[key];
+    if (!layer) return;
+    if (event.target.checked) map.addLayer(layer); else map.removeLayer(layer);
+  });
+});
 
-fetch('Quillcay.geojson').then(r => r.json()).then(gj => {
-  cuencaLayer = L.geoJSON(gj, {
-    style: { color: '#e5484d', weight: 2, fill: false }
-  }).addTo(map);
-  queueFit(cuencaLayer);
-  doInitialFitIfReady();
-}).catch(err => console.error('Error cargando Quillcay.geojson', err));
-
-fetch('Pachacoto.geojson').then(r => r.json()).then(gj => {
-  cuencaLayer = L.geoJSON(gj, {
-    style: { color: '#e5484d', weight: 2, fill: false }
-  }).addTo(map);
-  queueFit(cuencaLayer);
-  doInitialFitIfReady();
-}).catch(err => console.error('Error cargando Pachacoto.geojson', err));
-
-fetch('Pariac.geojson').then(r => r.json()).then(gj => {
-  cuencaLayer = L.geoJSON(gj, {
-    style: { color: '#e5484d', weight: 2, fill: false }
-  }).addTo(map);
-  queueFit(cuencaLayer);
-  doInitialFitIfReady();
-}).catch(err => console.error('Error cargando Pariac.geojson', err));
+let lagunasGeoLayer, riosLayer;
  
 fetch('Lagunas.geojson').then(r => r.json()).then(gj => {
   lagunasGeoLayer = L.geoJSON(gj, {
@@ -317,10 +309,6 @@ fetch('Rios_Quebradas.geojson').then(r => r.json()).then(gj => {
   }).addTo(map);
 }).catch(err => console.error('Error cargando Rios_Quebradas.geojson', err));
 
-document.getElementById('chkCuenca').addEventListener('change', e => {
-  if (!cuencaLayer) return;
-  if (e.target.checked) map.addLayer(cuencaLayer); else map.removeLayer(cuencaLayer);
-});
 document.getElementById('chkLagunas').addEventListener('change', e => {
   if (!lagunasGeoLayer) return;
   if (e.target.checked) map.addLayer(lagunasGeoLayer); else map.removeLayer(lagunasGeoLayer);
@@ -334,6 +322,17 @@ document.getElementById('chkRios').addEventListener('change', e => {
 let insituPhLayer = L.layerGroup();
 let insituCeLayer = L.layerGroup();
 
+function triangleMarker(latlng, color, popup) {
+  return L.marker(latlng, {
+    icon: L.divIcon({
+      className: 'measurement-marker',
+      html: `<span class="triangle-marker" style="border-bottom-color:${color}"></span>`,
+      iconSize: [14, 14],
+      iconAnchor: [7, 7]
+    })
+  }).bindPopup(popup);
+}
+
 function buildInsituLayers() {
   INSITU_DATA.forEach(d => {
     const latlng = [d.lat, d.lon];
@@ -346,17 +345,9 @@ function buildInsituLayers() {
       <div class="popup-row"><b>pH:</b> ${d.ph !== null && d.ph !== undefined ? d.ph.toFixed(2) : 'sin dato'}</div>
       <div class="popup-row"><b>CE:</b> ${d.ce !== null && d.ce !== undefined ? d.ce.toFixed(1) + ' µS/cm' : 'sin dato'}</div>`;
 
-    const hasPh = d.ph !== null && d.ph !== undefined;
-    L.circleMarker(latlng, {
-      radius: 5, fillColor: phColor(d.ph), color: '#0b0e12', weight: 1,
-      fillOpacity: hasPh ? 0.9 : 0.25
-    }).bindPopup(popupBase).addTo(insituPhLayer);
+    triangleMarker(latlng, phColor(d.ph), popupBase).addTo(insituPhLayer);
 
-    const hasCe = d.ce !== null && d.ce !== undefined;
-    L.circleMarker(latlng, {
-      radius: 5, fillColor: ceColor(d.ce), color: '#0b0e12', weight: 1,
-      fillOpacity: hasCe ? 0.9 : 0.25
-    }).bindPopup(popupBase).addTo(insituCeLayer);
+    triangleMarker(latlng, ceColor(d.ce), popupBase).addTo(insituCeLayer);
   });
 
   document.getElementById('countInsituPh').textContent =
@@ -375,28 +366,24 @@ document.getElementById('chkInsituCe').addEventListener('change', e => {
   if (e.target.checked) map.addLayer(insituCeLayer); else map.removeLayer(insituCeLayer);
 });
 
-/* ============ Estimaciones L8OLI ============ */
+/* ============ Estimaciones espectrales ============ */
 const dates = [...new Set(PH_DATA.map(d => d.f))].sort();
-const lagunasL8 = [...new Set(PH_DATA.map(d => d.n))].sort();
-const activeLagunasL8 = new Set(lagunasL8);
-
-let l8Layer = L.layerGroup().addTo(map);
+const spectralDefinitions = {
+  phL8: { label: 'pH_Landsat 8 OLI', value: 'ph', color: phColor },
+  phS2: { label: 'pH_Sentinel-2 MSI', value: 'ph', color: phColor },
+  phPlanet: { label: 'pH_Planet PSB.SD', value: 'ph', color: phColor },
+  ceL8: { label: 'CE_Landsat 8 OLI', value: 'ce', color: ceColor },
+  ceS2: { label: 'CE_Sentinel-2 MSI', value: 'ce', color: ceColor },
+  cePlanet: { label: 'CE_Planet PSB.SD', value: 'ce', color: ceColor }
+};
+const spectralLayers = {};
+Object.keys(spectralDefinitions).forEach(key => {
+  spectralLayers[key] = L.layerGroup();
+  const input = document.querySelector(`[data-spectral-layer="${key}"]`);
+  if (input && input.checked) spectralLayers[key].addTo(map);
+});
 let currentDateIdx = 0;
 let playTimer = null;
-
-// Lista de estaciones (checkboxes)
-const lagunaListEl = document.getElementById('lagunaList');
-lagunasL8.forEach(l => {
-  const row = document.createElement('label');
-  row.className = 'layer-row';
-  row.innerHTML = `<input type="checkbox" checked data-laguna="${l}">
-    ${l} <span class="count" id="count-${l.replace(/\s+/g,'_')}">–</span>`;
-  lagunaListEl.appendChild(row);
-  row.querySelector('input').addEventListener('change', e => {
-    if (e.target.checked) activeLagunasL8.add(l); else activeLagunasL8.delete(l);
-    renderL8();
-  });
-});
 
 // Lista de fechas clickeable (reemplaza el slider inferior)
 const dateListEl = document.getElementById('dateList');
@@ -429,8 +416,12 @@ document.getElementById('playBtn').addEventListener('click', () => {
   }
 });
 
-document.getElementById('chkL8').addEventListener('change', e => {
-  if (e.target.checked) map.addLayer(l8Layer); else map.removeLayer(l8Layer);
+document.querySelectorAll('[data-spectral-layer]').forEach(input => {
+  input.addEventListener('change', event => {
+    const layer = spectralLayers[event.target.dataset.spectralLayer];
+    if (!layer) return;
+    if (event.target.checked) map.addLayer(layer); else map.removeLayer(layer);
+  });
 });
 
 function renderL8() {
@@ -442,36 +433,26 @@ function renderL8() {
   const activeEl = dateListEl.children[currentDateIdx];
   if (activeEl) activeEl.scrollIntoView({ block: 'nearest' });
 
-  l8Layer.clearLayers();
-  let n = 0, sum = 0, min = Infinity, max = -Infinity;
-  const counts = {};
-  lagunasL8.forEach(l => counts[l] = 0);
-
-  PH_DATA.forEach(d => {
-    if (d.f !== fecha || !activeLagunasL8.has(d.n)) return;
-    counts[d.n]++;
-    const hasPh = d.ph !== null && d.ph !== undefined;
-    if (hasPh) { n++; sum += d.ph; min = Math.min(min, d.ph); max = Math.max(max, d.ph); }
-    const m = L.circleMarker([d.lat, d.lon], {
-      radius: 4.5, fillColor: phColor(d.ph), color: hasPh ? '#0b0e12' : '#666',
-      weight: 1, fillOpacity: hasPh ? 0.9 : 0.3
+  Object.entries(spectralDefinitions).forEach(([key, definition]) => {
+    const layer = spectralLayers[key];
+    layer.clearLayers();
+    PH_DATA.forEach(d => {
+      if (d.f !== fecha) return;
+      const value = d[definition.value];
+      const hasValue = value !== null && value !== undefined;
+      const marker = L.circleMarker([d.lat, d.lon], {
+        radius: 4.5, fillColor: definition.color(value), color: hasValue ? '#0b0e12' : '#666',
+        weight: 1, fillOpacity: hasValue ? 0.9 : 0.3
+      });
+      marker.bindPopup(`<div class="popup-title">${d.n}</div>
+        <div class="popup-row"><b>Fecha:</b> ${d.f}</div>
+        <div class="popup-row"><b>${definition.label}:</b> ${hasValue ? value.toFixed(2) : 'sin dato'}</div>
+        <div class="popup-row"><b>Lat/Lon:</b> ${d.lat}, ${d.lon}</div>`);
+      layer.addLayer(marker);
     });
-    m.bindPopup(`<div class="popup-title">${d.n}</div>
-      <div class="popup-row"><b>Fecha:</b> ${d.f}</div>
-      <div class="popup-row"><b>pH est.:</b> ${hasPh ? d.ph.toFixed(2) : 'sin dato'}</div>
-      <div class="popup-row"><b>Lat/Lon:</b> ${d.lat}, ${d.lon}</div>`);
-    l8Layer.addLayer(m);
   });
-
-  lagunasL8.forEach(l => {
-    const el = document.getElementById(`count-${l.replace(/\s+/g,'_')}`);
-    if (el) el.textContent = counts[l];
-  });
-
-  document.getElementById('sumN').textContent = n;
-  document.getElementById('sumMean').textContent = n ? (sum/n).toFixed(2) : '–';
-  document.getElementById('sumRange').textContent = n ? `${min.toFixed(2)} / ${max.toFixed(2)}` : '–';
-  document.getElementById('status').textContent = `${fecha} · ${n} puntos con dato de pH (L8 OLI)`;
+  const pointsWithPh = PH_DATA.filter(d => d.f === fecha && d.ph !== null && d.ph !== undefined).length;
+  document.getElementById('status').textContent = `${fecha} · ${pointsWithPh} puntos con dato espectral`;
 }
 
 buildDateList();
