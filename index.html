@@ -89,9 +89,8 @@
   .basin-label::before { border-right-color: #e5484d !important; }
   .measurement-marker { background: transparent; border: 0; }
   .triangle-marker {
-    width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent;
-    border-bottom: 13px solid; filter: drop-shadow(0 0 1px #0b0e12);
-  }
+    width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent;
+    border-bottom: 10px solid; filter: drop-shadow(0 0 1px #0b0e12);}
 
   ::-webkit-scrollbar { width: 8px; }
   ::-webkit-scrollbar-thumb { background: #232b36; border-radius: 4px; }
@@ -101,7 +100,6 @@
 
 <div id="topbar">
   <h1>Drenaje ácido de roca en la Cordillera Blanca</h1>
-  <span id="status"></span>
 </div>
 
 <div id="layout">
@@ -130,6 +128,38 @@
       </div>
     </div>
 
+    <!-- Escalas de color informativas -->
+    <div class="panel" id="panel-escala">
+      <div class="panel-head">
+        <h2>Escalas de color</h2>
+        <span class="chev">▾</span>
+      </div>
+    
+      <div class="panel-body">
+        <div class="subhead">pH</div>
+        <div class="legend-wrap">
+          <div class="legend-bar"
+               style="background:linear-gradient(to right, #d73027, #fdae61, #ffffbf, #a6d96a, #1a9850, #313695);">
+          </div>
+          <div class="legend-ticks">
+            <span>0</span><span>3.5</span><span>7</span><span>10.5</span><span>14</span>
+          </div>
+          <div class="legend-unit">Escala de pH (0–14)</div>
+        </div>
+    
+        <div class="subhead">Conductividad eléctrica (CE)</div>
+        <div class="legend-wrap">
+          <div class="legend-bar"
+               style="background:linear-gradient(to right, #1a9850, #91cf60, #ffffbf, #fc8d59, #d73027);">
+          </div>
+          <div class="legend-ticks">
+            <span>0</span><span>500</span><span>1000</span><span>1500</span><span>2000+</span>
+          </div>
+          <div class="legend-unit">CE (µS/cm)</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Mediciones en campo -->
     <div class="panel" id="panel-insitu">
       <div class="panel-head"><h2>Mediciones en campo</h2><span class="chev">▾</span></div>
@@ -139,26 +169,13 @@
           <input type="checkbox" id="chkInsituPh" checked>
           <span class="swatch" style="background:#a6d96a"></span>
           pH
-          <span class="count" id="countInsituPh">–</span>
         </label>
-        <div class="legend-wrap" id="legendInsituPh">
-          <div class="legend-bar" style="background:linear-gradient(to right, #d73027, #fdae61, #ffffbf, #a6d96a, #1a9850, #313695);"></div>
-          <div class="legend-ticks"><span>0</span><span>3.5</span><span>7</span><span>10.5</span><span>14</span></div>
-          <div class="legend-unit">Escala de pH (0–14)</div>
-        </div>
 
         <label class="layer-row" style="margin-top:12px;">
           <input type="checkbox" id="chkInsituCe">
           <span class="swatch" style="background:#fc8d59"></span>
           Conductividad eléctrica (CE)
-          <span class="count" id="countInsituCe">–</span>
         </label>
-        <div class="legend-wrap" id="legendInsituCe">
-          <div class="legend-bar" style="background:linear-gradient(to right, #1a9850, #91cf60, #ffffbf, #fc8d59, #d73027);"></div>
-          <div class="legend-ticks"><span>0</span><span>500</span><span>1000</span><span>1500</span><span>2000+</span></div>
-          <div class="legend-unit">CE (µS/cm)</div>
-        </div>
-
       </div>
     </div>
 
@@ -346,14 +363,8 @@ function buildInsituLayers() {
       <div class="popup-row"><b>CE:</b> ${d.ce !== null && d.ce !== undefined ? d.ce.toFixed(1) + ' µS/cm' : 'sin dato'}</div>`;
 
     triangleMarker(latlng, phColor(d.ph), popupBase).addTo(insituPhLayer);
-
     triangleMarker(latlng, ceColor(d.ce), popupBase).addTo(insituCeLayer);
   });
-
-  document.getElementById('countInsituPh').textContent =
-    INSITU_DATA.filter(d => d.ph !== null && d.ph !== undefined).length;
-  document.getElementById('countInsituCe').textContent =
-    INSITU_DATA.filter(d => d.ce !== null && d.ce !== undefined).length;
 }
 buildInsituLayers();
 
@@ -448,12 +459,8 @@ function renderL8() {
         <div class="popup-row"><b>Fecha:</b> ${d.f}</div>
         <div class="popup-row"><b>${definition.label}:</b> ${hasValue ? value.toFixed(2) : 'sin dato'}</div>
         <div class="popup-row"><b>Lat/Lon:</b> ${d.lat}, ${d.lon}</div>`);
-      layer.addLayer(marker);
-    });
-  });
-  const pointsWithPh = PH_DATA.filter(d => d.f === fecha && d.ph !== null && d.ph !== undefined).length;
-  document.getElementById('status').textContent = `${fecha} · ${pointsWithPh} puntos con dato espectral`;
-}
+      layer.addLayer(marker);});
+  });}
 
 buildDateList();
 renderL8();
