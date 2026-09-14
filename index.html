@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>pH estimado por pixel — L8 OLI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+  #topbar {
+    background: #10151c; color: #fff; padding: 12px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid #232b36;
+  }
+  #topbar h1 { font-size: 16px; margin: 0; font-weight: 600; }
+  #topbar span { color: #8fa3b8; font-size: 12px; }
+
+  #layout { display: flex; height: calc(100% - 50px); }
+
+  #sidebar {
+    width: 250px; background: #151b24; color: #dbe4ee; padding: 16px;
+    overflow-y: auto; border-right: 1px solid #232b36; flex-shrink: 0;
+  }
+  #sidebar h2 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+    color: #7d8fa3; margin: 18px 0 8px;
+  }
+  #sidebar h2:first-child { margin-top: 0; }
+  .layer-row { display: flex; align-items: center; gap: 8px; padding: 6px 4px; border-radius: 6px; cursor: pointer; }
+  .layer-row:hover { background: #1e2733; }
+  .layer-row input { accent-color: #3fa9f5; }
+  .count { margin-left: auto; font-size: 11px; color: #6b7d90; background: #1e2733; padding: 1px 7px; border-radius: 10px; }
+
+  #legend { margin-top: 10px; }
+  #legend-bar { height: 12px; border-radius: 3px; background: linear-gradient(to right, #d73027, #fdae61, #ffffbf, #a6d96a, #1a9850, #313695); }
+  #legend-ticks { display: flex; justify-content: space-between; font-size: 10px; color: #7d8fa3; margin-top: 3px; }
+  .stat-row { font-size: 12px; color: #b9c6d4; margin: 3px 0; }
+  .stat-row b { color: #fff; }
+
+  #map { flex: 1; background: #0b0e12; }
+  .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9); }
+  .leaflet-marker-pane, .leaflet-popup-pane { filter: none; }
+
+  #datebar {
+    position: absolute; bottom: 20px; left: 270px; right: 20px;
+    background: rgba(21,27,36,0.95); border: 1px solid #232b36; border-radius: 10px;
+    padding: 12px 18px; display: flex; align-items: center; gap: 14px; z-index: 1000;
+    color: #dbe4ee;
+  }
+  #dateLabel { font-weight: 700; font-size: 15px; min-width: 100px; }
+  #dateSlider { flex: 1; accent-color: #3fa9f5; }
+  #playBtn {
+    background: #3fa9f5; border: none; color: #0b0e12; font-weight: 700;
+    width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 14px;
+  }
+
+  .leaflet-popup-content-wrapper { background: #151b24; color: #dbe4ee; }
+  .leaflet-popup-tip { background: #151b24; }
+  .popup-title { font-weight: 700; margin-bottom: 6px; font-size: 14px; }
+  .popup-row { font-size: 12px; margin: 2px 0; color: #b9c6d4; }
+  .popup-row b { color: #fff; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <h1>🧪 pH estimado por pixel — Landsat 8 OLI</h1>
+  <span id="status"></span>
+</div>
+
+<div id="layout">
+  <div id="sidebar">
+    <h2>Lagunas</h2>
+    <div id="lagunaList"></div>
+
+    <h2>Escala de pH</h2>
+    <div id="legend">
+      <div id="legend-bar"></div>
+      <div id="legend-ticks"><span>3</span><span>5.5</span><span>7</span><span>8.5</span><span>11+</span></div>
+    </div>
+
+    <h2>Resumen (fecha seleccionada)</h2>
+    <div id="summary">
+      <div class="stat-row">Puntos con dato: <b id="sumN">–</b></div>
+      <div class="stat-row">pH promedio: <b id="sumMean">–</b></div>
+      <div class="stat-row">pH min / max: <b id="sumRange">–</b></div>
+    </div>
+  </div>
+
+  <div id="map"></div>
+</div>
+
+<div id="datebar">
+  <button id="playBtn">▶</button>
+  <div id="dateLabel">–</div>
+  <input type="range" id="dateSlider" min="0" max="0" step="1" value="0">
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="data.js"></script>
+<script>
+// PH_DATA viene de data.js: [{n, lat, lon, f, ph}, ...]
+
+const dates = [...new Set(PH_DATA.map(d => d.f))].sort();
+const lagunas = [...new Set(PH_DATA.map(d => d.n))].sort();
+
+// color: diverging red(acido) -> verde/azul(alcalino), centrado en pH ~7
+function phColor(ph) {
+  if (ph === null || ph === undefined) return '#444';
+  const stops = [
+    [3.0, [215,48,39]], [5.5, [253,174,97]], [7.0, [255,255,191]],
+    [8.5, [166,217,106]], [11.0, [49,54,149]]
+  ];
+  let lo = stops[0], hi = stops[stops.length-1];
+  for (let i = 0; i < stops.length-1; i++) {
+    if (ph >= stops[i][0] && ph <= stops[i+1][0]) { lo = stops[i]; hi = stops[i+1]; break; }
+  }
+  if (ph < stops[0][0]) return `rgb(${stops[0][1].join(',')})`;
+  if (ph > stops[stops.length-1][0]) return `rgb(${stops[stops.length-1][1].join(',')})`;
+  const t = (ph - lo[0]) / (hi[0] - lo[0]);
+  const c = lo[1].map((v,i) => Math.round(v + t*(hi[1][i]-v)));
+  return `rgb(${c.join(',')})`;
+}
+
+const map = L.map('map', { zoomControl: true });
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors', maxZoom: 19
+}).addTo(map);
+
+const activeLagunas = new Set(lagunas);
+let markerLayer = L.layerGroup().addTo(map);
+let currentDateIdx = 0;
+let playTimer = null;
+
+// sidebar: lista de lagunas con checkbox
+const lagunaListEl = document.getElementById('lagunaList');
+lagunas.forEach(l => {
+  const row = document.createElement('label');
+  row.className = 'layer-row';
+  row.innerHTML = `<input type="checkbox" checked data-laguna="${l}">
+    <span class="swatch" style="width:10px;height:10px;border-radius:50%;background:#3fa9f5"></span>
+    ${l} <span class="count" id="count-${l.replace(/\s+/g,'_')}">–</span>`;
+  lagunaListEl.appendChild(row);
+  row.querySelector('input').addEventListener('change', e => {
+    if (e.target.checked) activeLagunas.add(l); else activeLagunas.delete(l);
+    render();
+  });
+});
+
+// slider de fecha
+const slider = document.getElementById('dateSlider');
+slider.max = dates.length - 1;
+slider.addEventListener('input', () => { currentDateIdx = +slider.value; render(); });
+
+document.getElementById('playBtn').addEventListener('click', () => {
+  const btn = document.getElementById('playBtn');
+  if (playTimer) {
+    clearInterval(playTimer); playTimer = null; btn.textContent = '▶';
+  } else {
+    btn.textContent = '⏸';
+    playTimer = setInterval(() => {
+      currentDateIdx = (currentDateIdx + 1) % dates.length;
+      slider.value = currentDateIdx;
+      render();
+    }, 1100);
+  }
+});
+
+let firstRender = true;
+function render() {
+  const fecha = dates[currentDateIdx];
+  document.getElementById('dateLabel').textContent = fecha;
+
+  markerLayer.clearLayers();
+  const bounds = L.latLngBounds([]);
+  let n = 0, sum = 0, min = Infinity, max = -Infinity;
+  const counts = {};
+  lagunas.forEach(l => counts[l] = 0);
+
+  PH_DATA.forEach(d => {
+    if (d.f !== fecha || !activeLagunas.has(d.n)) return;
+    counts[d.n]++;
+    const latlng = [d.lat, d.lon];
+    bounds.extend(latlng);
+    const hasPh = d.ph !== null && d.ph !== undefined;
+    if (hasPh) { n++; sum += d.ph; min = Math.min(min, d.ph); max = Math.max(max, d.ph); }
+    const m = L.circleMarker(latlng, {
+      radius: 4.5,
+      fillColor: phColor(d.ph),
+      color: hasPh ? '#0b0e12' : '#666',
+      weight: 1,
+      fillOpacity: hasPh ? 0.9 : 0.3
+    });
+    m.bindPopup(`<div class="popup-title">${d.n}</div>
+      <div class="popup-row"><b>Fecha:</b> ${d.f}</div>
+      <div class="popup-row"><b>pH est.:</b> ${hasPh ? d.ph.toFixed(2) : 'sin dato'}</div>
+      <div class="popup-row"><b>Lat/Lon:</b> ${d.lat}, ${d.lon}</div>`);
+    markerLayer.addLayer(m);
+  });
+
+  lagunas.forEach(l => {
+    const el = document.getElementById(`count-${l.replace(/\s+/g,'_')}`);
+    if (el) el.textContent = counts[l];
+  });
+
+  document.getElementById('sumN').textContent = n;
+  document.getElementById('sumMean').textContent = n ? (sum/n).toFixed(2) : '–';
+  document.getElementById('sumRange').textContent = n ? `${min.toFixed(2)} / ${max.toFixed(2)}` : '–';
+  document.getElementById('status').textContent = `${n} puntos con dato de pH`;
+
+  if (firstRender && bounds.isValid()) { map.fitBounds(bounds, { padding: [30,30] }); firstRender = false; }
+}
+
+map.setView([-9.61, -77.32], 12);
+render();
+</script>
+</body>
+</html>
