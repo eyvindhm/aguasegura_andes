@@ -40,7 +40,7 @@
   .stat-row b { color: #fff; }
 
   #map { flex: 1; background: #0b0e12; }
-  .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9); }
+  .leaflet-tile-pane { /* filter removido: no aplica a imágenes satelitales */ }
   .leaflet-marker-pane, .leaflet-popup-pane { filter: none; }
 
   #datebar {
@@ -125,8 +125,9 @@ function phColor(ph) {
 }
 
 const map = L.map('map', { zoomControl: true });
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap contributors', maxZoom: 19
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community',
+  maxZoom: 19
 }).addTo(map);
 
 const activeLagunas = new Set(lagunas);
