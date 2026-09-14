@@ -10,17 +10,16 @@
   html, body { margin: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
   #topbar {
-    background: #263b52; color: #fff; padding: 12px 20px;
+    background: #191C1C; color: #FFFCFC; padding: 12px 20px;
     display: flex; align-items: center; justify-content: space-between;
     border-bottom: 1px solid #232b36;}
  
-  #topbar h1 { font-size: 16px; margin: 0; font-weight: 600; }
-  #topbar span { color: #8fa3b8; font-size: 12px; }
-
+  #topbar h1 {font-size: 16px; margin: 0; font-weight: 600; }
+  #topbar span {color: #FFFCFC; font-size: 12px; }
   #layout { display: flex; height: calc(100% - 50px); }
 
   #sidebar {
-    width: 280px; background: #344b63; color: #dbe4ee; padding: 14px 16px 30px;
+    width: 280px; background: #191C1C; color: #FFFCFC; padding: 14px 16px 30px;
     overflow-y: auto; border-right: 1px solid #232b36; flex-shrink: 0;}
 
   .panel {border-bottom: 1px solid #51677d; padding-bottom: 14px; margin-bottom: 14px; }
@@ -32,9 +31,9 @@
  
   .panel-head h2 {
     font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em;
-    color: #7d8fa3; margin: 0; font-weight: 700;}
-  .panel-head .chev { color: #55677c; font-size: 11px; transition: transform 0.15s; }
-  .panel.collapsed .chev { transform: rotate(-90deg); }
+    color: #FFFCFC; margin: 0; font-weight: 700;}
+  .panel-head .chev {color: #FFFCFC; font-size: 11px; transition: transform 0.15s; }
+  .panel.collapsed .chev {transform: rotate(-90deg); }
   .panel.collapsed .panel-body { display: none; }
 
   .layer-row {display: flex; align-items: center; gap: 8px; padding: 5px 4px; border-radius: 6px; cursor: pointer; font-size: 13px; }
@@ -45,9 +44,9 @@
   .count { margin-left: auto; font-size: 11px; color: #6b7d90; background: #1e2733; padding: 1px 7px; border-radius: 10px; }
 
   .legend-wrap { margin-top: 8px; }
-  .legend-bar { height: 12px; border-radius: 3px; }
-  .legend-ticks { display: flex; justify-content: space-between; font-size: 10px; color: #7d8fa3; margin-top: 3px; }
-  .legend-unit { font-size: 10.5px; color: #55677c; margin-top: 4px; }
+  .legend-bar {height: 12px; border-radius: 3px; }
+  .legend-ticks {display: flex; justify-content: space-between; font-size: 10px; color: #FFFCFC; margin-top: 3px; }
+  .legend-unit {font-size: 10.5px; color: #FFFCFC; margin-top: 4px; }
 
   .stat-row { font-size: 12px; color: #b9c6d4; margin: 3px 0; }
   .stat-row b { color: #fff; }
@@ -115,10 +114,10 @@
   
       <div class="subhead">Cuencas afectadas por DAR</div>
         <label class="layer-row"><input type="checkbox" id="chkBasinCasca" checked><span class="swatch outline" style="border-color:#e5484d"></span>Casca</label>
+        <label class="layer-row"><input type="checkbox" id="chkBasinQuillcay" checked><span class="swatch outline" style="border-color:#e5484d"></span>Quillcay</label> 
+        <label class="layer-row"><input type="checkbox" id="chkBasinPariac" checked><span class="swatch outline" style="border-color:#e5484d"></span>Pariac</label>
         <label class="layer-row"><input type="checkbox" id="chkBasinRioNegro" checked><span class="swatch outline" style="border-color:#e5484d"></span>Río Negro</label>
         <label class="layer-row"><input type="checkbox" id="chkBasinPachacoto" checked><span class="swatch outline" style="border-color:#e5484d"></span>Pachacoto</label>
-        <label class="layer-row"><input type="checkbox" id="chkBasinPariac" checked><span class="swatch outline" style="border-color:#e5484d"></span>Pariac</label>
-        <label class="layer-row"><input type="checkbox" id="chkBasinQuillcay" checked><span class="swatch outline" style="border-color:#e5484d"></span>Quillcay</label>
       </div>
     </div>
 
@@ -446,7 +445,7 @@ buildDateList();
 renderL8();
 
 /* Vista inicial: si aún no hay capas geojson cargadas, centra en la primera fecha L8 */
-map.setView([-9.547476, -77.395658], 12);
+map.setView([-9.676481, -77.354285], 15);
 </script>
 </body>
 </html>
