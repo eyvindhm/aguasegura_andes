@@ -10,7 +10,7 @@
   html, body { margin: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
   #topbar {
-    background: #10151c; color: #fff; padding: 12px 20px;
+    background: #263b52; color: #fff; padding: 12px 20px;
     display: flex; align-items: center; justify-content: space-between;
     border-bottom: 1px solid #232b36;}
  
@@ -20,10 +20,10 @@
   #layout { display: flex; height: calc(100% - 50px); }
 
   #sidebar {
-    width: 280px; background: #151b24; color: #dbe4ee; padding: 14px 16px 30px;
+    width: 280px; background: #344b63; color: #dbe4ee; padding: 14px 16px 30px;
     overflow-y: auto; border-right: 1px solid #232b36; flex-shrink: 0;}
 
-  .panel { border-bottom: 1px solid #232b36; padding-bottom: 14px; margin-bottom: 14px; }
+  .panel {border-bottom: 1px solid #51677d; padding-bottom: 14px; margin-bottom: 14px; }
   .panel:last-child { border-bottom: none; }
 
   .panel-head {
@@ -37,9 +37,9 @@
   .panel.collapsed .chev { transform: rotate(-90deg); }
   .panel.collapsed .panel-body { display: none; }
 
-  .layer-row { display: flex; align-items: center; gap: 8px; padding: 5px 4px; border-radius: 6px; cursor: pointer; font-size: 13px; }
-  .layer-row:hover { background: #1e2733; }
-  .layer-row input { accent-color: #3fa9f5; flex-shrink: 0; }
+  .layer-row {display: flex; align-items: center; gap: 8px; padding: 5px 4px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+  .layer-row:hover {background: #405a73; }
+  .layer-row input {accent-color: #3fa9f5; flex-shrink: 0; }
   .swatch { width: 16px; height: 3px; border-radius: 2px; flex-shrink: 0; }
   .swatch.outline { width: 14px; height: 14px; border-radius: 3px; background: transparent; border: 2px solid; }
   .count { margin-left: auto; font-size: 11px; color: #6b7d90; background: #1e2733; padding: 1px 7px; border-radius: 10px; }
@@ -108,23 +108,17 @@
     <!-- Capas de visualización -->
     <div class="panel" id="panel-geo">
       <div class="panel-head"><h2>Capas de visualización</h2><span class="chev">▾</span></div>
+     
       <div class="panel-body">
-        <div class="subhead">Cuencas afectadas por DAR</div>
+        <label class="layer-row"><input type="checkbox" id="chkLagunas" checked><span class="swatch outline" style="border-color:#3fa9f5"></span>Lagunas</label>
+        <label class="layer-row"><input type="checkbox" id="chkRios" checked><span class="swatch" style="background:#3fa9f5"></span>Ríos y Quebradas</label>
+  
+      <div class="subhead">Cuencas afectadas por DAR</div>
         <label class="layer-row"><input type="checkbox" id="chkBasinCasca" checked><span class="swatch outline" style="border-color:#e5484d"></span>Casca</label>
         <label class="layer-row"><input type="checkbox" id="chkBasinRioNegro" checked><span class="swatch outline" style="border-color:#e5484d"></span>Río Negro</label>
         <label class="layer-row"><input type="checkbox" id="chkBasinPachacoto" checked><span class="swatch outline" style="border-color:#e5484d"></span>Pachacoto</label>
         <label class="layer-row"><input type="checkbox" id="chkBasinPariac" checked><span class="swatch outline" style="border-color:#e5484d"></span>Pariac</label>
         <label class="layer-row"><input type="checkbox" id="chkBasinQuillcay" checked><span class="swatch outline" style="border-color:#e5484d"></span>Quillcay</label>
-        <label class="layer-row">
-          <input type="checkbox" id="chkLagunas" checked>
-          <span class="swatch outline" style="border-color:#3fa9f5"></span>
-          Lagunas
-        </label>
-        <label class="layer-row">
-          <input type="checkbox" id="chkRios" checked>
-          <span class="swatch" style="background:#3fa9f5"></span>
-          Ríos y quebradas
-        </label>
       </div>
     </div>
 
