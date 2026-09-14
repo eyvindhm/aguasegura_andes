@@ -255,11 +255,109 @@ function ceColor(ce) {
 
 /* ============ Mapa base ============ */
 const map = L.map('map', { zoomControl: true });
-map.setView([-9.442849, -77.463175], 8);
+ map.setView([-9.677481, -77.354285], 11);
 const baseLayer = L.tileLayer(
   'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
   {attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community',maxZoom: 19}
 ).addTo(map);
+
+/* ============ Comparador antes / después ============ */
+
+let beforeLayer = null;
+let afterLayer = null;
+let comparisonControl = null;
+let comparisonLoaded = false;
+
+async function loadComparisonImages() {
+  if (comparisonLoaded) {
+    beforeLayer.addTo(map);
+    afterLayer.addTo(map);
+    comparisonControl = L.control.sideBySide(beforeLayer, afterLayer).addTo(map);
+    return;
+  }
+
+  try {
+    const [beforeResponse, afterResponse] = await Promise.all([
+      fetch('assets/antes.tif'),
+      fetch('assets/despues.tif')
+    ]);
+
+    if (!beforeResponse.ok) {
+      throw new Error(
+        `No se pudo cargar assets/antes.tif: HTTP ${beforeResponse.status}`
+      );
+    }
+
+    if (!afterResponse.ok) {
+      throw new Error(
+        `No se pudo cargar assets/despues.tif: HTTP ${afterResponse.status}`
+      );
+    }
+
+    const [beforeBuffer, afterBuffer] = await Promise.all([
+      beforeResponse.arrayBuffer(),
+      afterResponse.arrayBuffer()
+    ]);
+
+    const [beforeRaster, afterRaster] = await Promise.all([
+      parseGeoraster(beforeBuffer),
+      parseGeoraster(afterBuffer)
+    ]);
+
+    beforeLayer = new GeoRasterLayer({
+      georaster: beforeRaster,
+      opacity: 1,
+      resolution: 128
+    });
+
+    afterLayer = new GeoRasterLayer({
+      georaster: afterRaster,
+      opacity: 1,
+      resolution: 128
+    });
+
+    beforeLayer.addTo(map);
+    afterLayer.addTo(map);
+
+    comparisonControl = L.control
+      .sideBySide(beforeLayer, afterLayer)
+      .addTo(map);
+
+    comparisonLoaded = true;
+
+    document.getElementById('compareBtn').textContent =
+      'Cerrar comparación';
+
+  } catch (error) {
+    console.error('Error cargando las imágenes TIFF:', error);
+  }
+}
+
+function closeComparisonImages() {
+  if (comparisonControl) {
+    map.removeControl(comparisonControl);
+    comparisonControl = null;
+  }
+
+  if (beforeLayer) {
+    map.removeLayer(beforeLayer);
+  }
+
+  if (afterLayer) {
+    map.removeLayer(afterLayer);
+  }
+
+  document.getElementById('compareBtn').textContent =
+    'Comparar antes / después';
+}
+
+document.getElementById('compareBtn').addEventListener('click', () => {
+  if (comparisonControl) {
+    closeComparisonImages();
+  } else {
+    loadComparisonImages();
+  }
+});
 
 /* ============ Cuencas afectadas por DAR ============ */
 const basinDefinitions = [
