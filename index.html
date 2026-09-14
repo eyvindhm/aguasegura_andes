@@ -260,7 +260,7 @@ function doInitialFitIfReady() {
 /* ============ Capas geográficas (geojson) ============ */
 let cuencaLayer, lagunasGeoLayer, riosLayer;
 
-fetch('Cuenca_Rio_Negro.geojson').then(r => r.json()).then(gj => {
+fetch('Cuenca Rio Negro.geojson').then(r => r.json()).then(gj => {
   cuencaLayer = L.geoJSON(gj, {
     style: { color: '#e5484d', weight: 2, fill: false }
   }).addTo(map);
