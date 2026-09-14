@@ -39,9 +39,11 @@
   .layer-row {display: flex; align-items: center; gap: 8px; padding: 5px 4px; border-radius: 6px; cursor: pointer; font-size: 13px; }
   .layer-row:hover {background: #2b3030; }
   .layer-row input {accent-color: #3fa9f5; flex-shrink: 0; }
-  .swatch { width: 16px; height: 3px; border-radius: 2px; flex-shrink: 0; }
-  .swatch.outline { width: 14px; height: 14px; border-radius: 3px; background: transparent; border: 2px solid; }
-  .count { margin-left: auto; font-size: 11px; color: #FFFCFC; background: #2b3030; padding: 1px 7px; border-radius: 10px; }
+  .swatch {width: 16px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+  #panel-insitu .swatch,
+  #panel-l8 .swatch {display: none;}
+  .swatch.outline {width: 14px; height: 14px; border-radius: 3px; background: transparent; border: 2px solid; }
+  .count {margin-left: auto; font-size: 11px; color: #FFFCFC; background: #2b3030; padding: 1px 7px; border-radius: 10px; }
 
   .legend-wrap {margin-top: 8px; }
   .legend-bar {height: 12px; border-radius: 3px; }
