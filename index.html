@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
 <style>
-  * { box-sizing: border-box; }
+  * {box-sizing: border-box; }
   html, body { margin: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
   #topbar {
@@ -16,7 +16,7 @@
  
   #topbar h1 {font-size: 16px; margin: 0; font-weight: 600; }
   #topbar span {color: #FFFCFC; font-size: 12px; }
-  #layout { display: flex; height: calc(100% - 50px); }
+  #layout {display: flex; height: calc(100% - 50px); }
 
   #sidebar {
     width: 280px; background: #191C1C; color: #FFFCFC; padding: 14px 16px 30px;
@@ -37,21 +37,19 @@
   .panel.collapsed .panel-body { display: none; }
 
   .layer-row {display: flex; align-items: center; gap: 8px; padding: 5px 4px; border-radius: 6px; cursor: pointer; font-size: 13px; }
-  .layer-row:hover {background: #405a73; }
+  .layer-row:hover {background: #2b3030; }
   .layer-row input {accent-color: #3fa9f5; flex-shrink: 0; }
   .swatch { width: 16px; height: 3px; border-radius: 2px; flex-shrink: 0; }
   .swatch.outline { width: 14px; height: 14px; border-radius: 3px; background: transparent; border: 2px solid; }
-  .count { margin-left: auto; font-size: 11px; color: #6b7d90; background: #1e2733; padding: 1px 7px; border-radius: 10px; }
+  .count { margin-left: auto; font-size: 11px; color: #FFFCFC; background: #2b3030; padding: 1px 7px; border-radius: 10px; }
 
-  .legend-wrap { margin-top: 8px; }
+  .legend-wrap {margin-top: 8px; }
   .legend-bar {height: 12px; border-radius: 3px; }
   .legend-ticks {display: flex; justify-content: space-between; font-size: 10px; color: #FFFCFC; margin-top: 3px; }
   .legend-unit {font-size: 10.5px; color: #FFFCFC; margin-top: 4px; }
-
-  .stat-row { font-size: 12px; color: #b9c6d4; margin: 3px 0; }
-  .stat-row b { color: #fff; }
-
-  .subhead { font-size: 11px; color: #55677c; margin: 10px 0 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .stat-row { font-size: 12px; color: #FFFCFC; margin: 3px 0; }
+  .stat-row b { color: #FFFCFC; }
+  .subhead { font-size: 11px; color: #FFFCFC; margin: 10px 0 4px; text-transform: uppercase; letter-spacing: 0.04em; }
 
   #map { flex: 1; background: #0b0e12; }
 
@@ -70,10 +68,10 @@
     border: 1px solid #232b36; border-radius: 8px; padding: 4px;}
   .date-item {
     font-size: 12.5px; padding: 6px 9px; border-radius: 6px; cursor: pointer;
-    color: #b9c6d4; display: flex; justify-content: space-between; align-items: center;}
-  .date-item:hover { background: #1e2733; }
-  .date-item.active { background: #3fa9f5; color: #0b0e12; font-weight: 700; }
-  .date-item .n { font-size: 10.5px; opacity: 0.75; }
+    color: #FFFCFC; display: flex; justify-content: space-between; align-items: center;}
+  .date-item:hover { background: #2b3030; }
+  .date-item.active {background: #3fa9f5; color: #FFFCFC; font-weight: 700; }
+  .date-item .n {font-size: 10.5px; opacity: 0.75; }
 
   .leaflet-popup-content-wrapper {background: #151b24; color: #dbe4ee; }
   .leaflet-popup-tip { background: #151b24; }
@@ -155,18 +153,10 @@
     <div class="panel" id="panel-insitu">
       <div class="panel-head"><h2>Mediciones en campo</h2><span class="chev">▾</span></div>
       <div class="panel-body">
-
         <label class="layer-row">
-          <input type="checkbox" id="chkInsituPh" checked>
-          <span class="swatch" style="background:#a6d96a"></span>
-          pH
-        </label>
-
+          <input type="checkbox" id="chkInsituPh" checked><span class="swatch" style="background:#a6d96a"></span>pH</label>
         <label class="layer-row" style="margin-top:12px;">
-          <input type="checkbox" id="chkInsituCe">
-          <span class="swatch" style="background:#fc8d59"></span>
-          Conductividad eléctrica (CE)
-        </label>
+          <input type="checkbox" id="chkInsituCe"><span class="swatch" style="background:#fc8d59"></span>Conductividad eléctrica (CE)</label>
       </div>
     </div>
 
@@ -184,10 +174,9 @@
         <div class="subhead">Filtro de fecha</div>
         <div id="dateFilterHead">
           <button id="playBtn" title="Reproducir secuencia">▶</button>
-          <span style="font-size:12px; color:#b9c6d4;">Selecciona una fecha</span>
+          <span style="font-size:12px; color:#FFFCFC;">Selecciona una fecha</span>
         </div>
         <div id="dateList"></div>
-
       </div>
     </div>
 
@@ -445,7 +434,7 @@ buildDateList();
 renderL8();
 
 /* Vista inicial: si aún no hay capas geojson cargadas, centra en la primera fecha L8 */
-map.setView([-9.676481, -77.354285], 15);
+map.setView([-9.676481, -77.354285], 9);
 </script>
 </body>
 </html>
