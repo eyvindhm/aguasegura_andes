@@ -188,6 +188,10 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://unpkg.com/geotiff/dist/geotiff.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-geotiff@2.0.0/dist/leaflet-geotiff.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-side-by-side@2.0.0/leaflet-side-by-side.min.js"></script>
+
 <script src="data_insitu.js"></script>
 <script src="data_est_L8OLI.js"></script>
 <script src="data_est_S2MSI.js"></script>
@@ -237,6 +241,13 @@ function ceColor(ce) {
 
 /* ============ Mapa base ============ */
 const map = L.map('map', { zoomControl: true });
+const beforeLayer = L.leafletGeotiff('assets/antes.tif', {band: [0, 1, 2],name: 'Antes',opacity: 1});
+const afterLayer = L.leafletGeotiff('assets/despues.tif', {band: [0, 1, 2],name: 'Después',opacity: 1});
+beforeLayer.addTo(map);
+afterLayer.addTo(map);
+
+L.control.sideBySide(beforeLayer, afterLayer).addTo(map);
+
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
   attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community',
   maxZoom: 19
