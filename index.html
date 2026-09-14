@@ -76,7 +76,7 @@
   .date-item.active { background: #3fa9f5; color: #0b0e12; font-weight: 700; }
   .date-item .n { font-size: 10.5px; opacity: 0.75; }
 
-  .leaflet-popup-content-wrapper { background: #151b24; color: #dbe4ee; }
+  .leaflet-popup-content-wrapper {background: #151b24; color: #dbe4ee; }
   .leaflet-popup-tip { background: #151b24; }
   .popup-title { font-weight: 700; margin-bottom: 6px; font-size: 14px; }
   .popup-row { font-size: 12px; margin: 2px 0; color: #b9c6d4; }
@@ -250,16 +250,6 @@ L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/
   maxZoom: 19
 }).addTo(map);
 
-const fitBoundsQueue = [];
-function queueFit(layer) { fitBoundsQueue.push(layer); }
-let didInitialFit = false;
-function doInitialFitIfReady() {
-  if (didInitialFit) return;
-  const b = L.latLngBounds([]);
-  fitBoundsQueue.forEach(l => { try { b.extend(l.getBounds()); } catch(e){} });
-  if (b.isValid()) { map.fitBounds(b, { padding: [30,30] }); didInitialFit = true; }
-}
-
 /* ============ Cuencas afectadas por DAR ============ */
 const basinDefinitions = [
   { key: 'Casca', file: 'Casca.geojson', checkbox: 'chkBasinCasca' },
@@ -284,8 +274,6 @@ basinDefinitions.forEach(({ key, name = key, file, checkbox }) => {
       }
     }).addTo(map);
     basinLayers[key] = layer;
-    queueFit(layer);
-    doInitialFitIfReady();
   }).catch(err => console.error(`Error cargando ${file}`, err));
 
   document.getElementById(checkbox).addEventListener('change', event => {
@@ -458,8 +446,7 @@ buildDateList();
 renderL8();
 
 /* Vista inicial: si aún no hay capas geojson cargadas, centra en la primera fecha L8 */
-map.setView([-9.61, -77.32], 12);
-setTimeout(doInitialFitIfReady, 1200);
+map.setView([-9.547476, -77.395658], 12);
 </script>
 </body>
 </html>
